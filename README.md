@@ -34,69 +34,109 @@ Here's the simple app we're going to be using as a test base.
         });
 
         app.listen(app.get('port'), function(){
-          console.log("Node.js Hosting Test listening on port " + config.get('PORT') + ', running in ' + app.settings.env + " mode, Node version is: " + process.version);
+          console.log("Node.js Hosting Test listening on port " + config.get('PORT'));
+          console.log("Running in ' + app.settings.env + " mode, Node version is: " + process.version);
         });
 
 
-I'm using [nconf](https://github.com/flatiron/nconf) to elegantly handle the varying ways that we'll be specifying the port our app should listen to (sometimes required) and a dummy variable I'm calling `SECRET.` When I load the app, I'll be able to tell if our variables are being correctly pulled from some external source. If not, the response I get back when I load the app will be `default secret`. I should also be able to see what port the app is listening on an the `NODE_ENV` it's using if I can access the logs from the startup of the app.
+I'm using [nconf](https://github.com/flatiron/nconf) to elegantly handle the varying ways that we'll be specifying the port our app should listen to (sometimes required) and a dummy variable I'm calling `SECRET.` It will first look for arguments passed in to the `node` command, then environment variables, then it will try to load a `config.json` file one level up from the root, and finally fall back on some defaults we've defined right in the code. When I load the app, I'll be able to tell if our variables are being correctly pulled from one of those external sources. If it's not, the response I get back when I load the app will be `default secret`. I should also be able to see what port the app is listening on an the `NODE_ENV` it's using if I can access the logs from the startup of the app.
 
-And now in no particular order...
+Finally, I'm setting `"engines": { "node": "v0.10.x" ...` in the `package.json` file to see how each provider reacts.
+
+_And now in no particular order..._
 
 ## Nodejitsu
 https://www.nodejitsu.com/
 
 One of the original players and still purely a Node.js solution, Nodejitsu became an official partner of Joyent's back when Joyent [dropped their no.de service](http://joyent.com/no-de) (shame, it was such an awesome domain name). Nodejitsu no longer has a permanently free tier, but individual plans start at a paltry $3 a month and there's a 30-day free trial.
 
+#### Configuring variables
+According to the docs it doesn't matter what you set the listening port to, as long as it's either 80 or greater than 1024.
+
+Setting our `SECRET` to override the default was straightforward, using the CLI you can list and set variables, much like several other providers on this list.
+
 #### Deploying
-Pushing your code to the Nodejitsu cloud is done via a custom command-line tool, installed with npm.
-- requires a "subdomain" property in the package.json, but friendly prompt to add it
-- auto-increments the "version" in package.json on each deploy
-- plans start at $3 a month
-- proper WebSocket support
-- mongoHQ or mongolab
-- IrisRedis
-- still only running 0.8.19. Unexpected because it claims "info: Welcome to Nodejitsu jedwood
-info:    jitsu v0.12.10-2, node v0.10.4"
-- keep it running "Nodejitsu's cloud services watch your programs for you! You shouldn't have to do anything special to keep your apps running"
-- doesn't matter what you set the port to, as long as it's either 80 or greater than 1024. Things get proxied through 80 of course.
-- logs via jitsu logs
-- totally subjective unscientific feel: very snappy to deploy and view logs
-- predeploy and postdeploy hooks configured in package.json
-- when I changed the "name" in my package.json, it wouldn't let me deploy to that same app
+Pushing your code to the Nodejitsu cloud is done via a custom command-line interface application (CLI), installed with npm. When you sign up you get dumped right into a github repository with instructions, but overall the setup process was pretty painless. You're prompted to select a subdomain, which is then automatically added to the `package.json` file. In the couple of tests I ran, deploying was really quick. It auto-increments the `version` property in the package.json file with each deploy, which doesn't bother me but might annoy some folks.
+
+I only ran into two small hitches. The first was with versioning. In the message that gets spit out upon deploying, I was shown:
+
+`info: jitsu v0.12.10-2, node v0.10.4`
+
+and yet, I was told that `0.10.x` was not a supported value. Only by bumping down to `0.8.x` was I able to find success.
+
+Second, I tried to change the `name` property in `package.json` and it then wouldn't let me deploy.
+
+#### Misc Notes and Dashboard
+I like that Nodejitsu is so Node.js centric. Any custom configuration is at least handled via the standard `package.json` file. You can even define custom `predeploy` and `postdeploy` hooks. My totally subjective response is that it felt very snappy to deploy and view logs.
+
+![Nodejitsu dashboard](img/nodejitsu-dashboard.png)
 
 
-### Heroku
-- supports 0.10.6 as of May 16. Nice!
-- also has a CLI, but deployment via git
-- git remote add heroku git@heroku.com:jedwoodtest.git
-- must be on port 5000
-- no proper WebSocket support
-- got a little hung up on not including "heroku ps:scale web=1" should have been more clear when first creating/deploying
-- subjective- dashboard really nice, with features like pointing 404 pages to an S3 bucket and transfering app ownership (very handy when doing client work )
-- request timeout of 30 seconds
-- free
-- heroku logs
+## Heroku
+https://www.heroku.com/
 
+The 800 pound gorilla of the PaaS world, made insanely popular by their undying love from Ruby on Rails enthusiasts everywhere.
 
-### Modulus
-- $15 a month
-- MongoDB on board
-- cli, non-git. ZIPS and uploads your entire app every time.
-- DB $5.00/GB/MONTH 64MB FREE. $1.00/GB/MONTH 1GB FREE.
-- 8080 but we recommend using the PORT environment variable (process.env.PORT).
-- weird that I couldn't use spaces in the value of my ENV variable. tripped me up
-- ignores engine and runs on 0.8.15
-- `modulus project logs`
+#### Configuring variables
+Setting our `SECRET` to override the default was again using the CLI. No surprises there.
 
-### AppFog
-- Mongo on board
-- v 0.8.14, ignores package.json
-- CLI deploy (installed as a Ruby gem)
-- Free, first paid tier is $20/mo
-- up to 8 instances across 2GB of RAM, split however you want
-- Use of non-standard "process.env.VCAP_APP_PORT", but I just used my default and it works: 57277
-- let's you choose which cloud (AWS in multiple regions, HP, Azure)
-- `af logs jedwood`
+All apps run on port 5000, so you need to be listening for that.
+
+Finally, you have to create a `Procfile` that has specifies `web: node server.js`. Not a big deal, but certainly a side effect of running on a PaaS that supports multiple languages.
+
+#### Deploying
+The Heroku "toolbelt" CLI is used to manage your account and applications, but deploying is done via git. You just add the endpoint they provide you as a `remote` in your git config. Because they're not exclusively focused on Node.js, I was pleasantly surprised to find that they already supported v 0.10.6!
+
+My first deployment seemed to succeed, but tracking down the errors I received lead me to discover that I first needed to specify how many resources I wanted devoted to this app:
+
+        heroku ps:scale web=1
+
+After that, it was smooth sailing.
+
+#### Misc Notes and Dashboard
+I didn't try Heroku for my own projects until about 3 months ago, partly because I have a modest level of comfort in setting up my own servers, and partly because I just figured they treated node.js as an afterthought. But if you can get over their lack of WebSocket support and some [misleading marketing and stats](http://techcrunch.com/2013/02/14/heroku-admits-to-performance-degradation-over-the-past-3-years-after-criticism-from-rap-genius/), it's a pretty smooth experience.
+
+They've also got a very polished and functional dashboard, with some handy features you won't find elsewhere like pointing to an S3-hosted file for 404 pages, and the ability to transfer ownership of a project to a different user.
+
+![Heroku dashboard](img/heroku-dashboard.png)
+
+## Modulus
+http://modulus.io
+
+The .io extension should tip you off that this is a relatively new service. Focused just on Node.js, they have built-in support for MongoDB and local file storage.
+
+#### Configuring variables
+Variables can be set either via the web interface or the CLI. I got stuck trying to create the `SECRET`. After a bit of trial and error, I discovered that you can't include spaces in the value! So `modulus secret` didn't work. Weird.
+
+The app needs to listen on port 8080, "but we recommend using the PORT environment variable (process.env.PORT)."
+
+#### Deploying
+Deploying can be done via CLI, but you can also zip your whole project and upload it via their web interface, which is... interesting. I didn't have any problems deploying, but your entire project (except node_modules) gets bundled and uploaded every time, which makes it a much slower process than tools that use the "diff" capabilities of git or rsync.
+
+As of writing, Modulus runs v 0.8.15 and ignores whatever you specify in package.json
+
+#### Misc Notes and Dashboard
+I'm cheering for these guys and hope they continue to improve. It's nice having the option of built-in MongoDB, and I like the upfront pricing.
+
+![Modulus dashboard](img/modulus-dashboard.png)
+
+## AppFog
+http://appfog.com
+
+The PaaS formerly known as PHP Fog. You can specify which cloud you want to run in, from several AWS regions, HP, an even Azure.
+
+#### Configuring variables
+Variables can be set either via the web interface or the CLI. No problems setting our `SECRET` variable.
+
+The docs said I needed to listen to `process.env.VCAP_APP_PORT` for the port, but I just tried it with the default and it worked. The logs showed that it was listening on 57277.
+
+#### Deploying
+Also via the CLI. As of writing, AppFog runs v 0.8.14 and ignores whatever you specify in package.json
+
+#### Misc Notes and Dashboard
+The free plan seems pretty generous, giving you up to 8 instances across 2GB of RAM, split however you want. They also have options for built-in MongoDB.
+
+![AppFog dashboard](img/appfog-dashboard.png)
 
 ### Windows Azure
 - Sign up a little more involved: verify SMS, enter billing creds, Windows Live login
