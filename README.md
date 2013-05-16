@@ -138,13 +138,45 @@ The free plan seems pretty generous, giving you up to 8 instances across 2GB of 
 
 ![AppFog dashboard](img/appfog-dashboard.png)
 
-### Windows Azure
-- Sign up a little more involved: verify SMS, enter billing creds, Windows Live login
-- CLI for config (optional, installed via npm), git for deploy. "azure site create jedwood"
-- env variable from the CLI lowercased my key name from SECRET to secret. Had to use web interface to correct
-- 0.8.2, and must be configured correctly in package.json
-- logs are streaming! `azure site log tail`
-- port? \\.\pipe\bea0dffc-de5b-47f4-8575-4d17c2175fd5
+## Windows Azure
+http://windowsazure.com
+
+Yep. Believe it.
+
+#### Configuring variables
+Variables can be set either via the web interface or the CLI. I experienced on weird behavior on the `SECRET` when I first set it up via the CLI; it was lowercased to `secret`. I had to use the web interface to correct it.
+
+The app ran fine without making any changes to our configuration for ports, although the logs showed a pretty wacky value: `\\.\pipe\bea0dffc-de5b-47f4-8575-4d17c2175fd5`
+
+#### Deploying
+You might expect Microsoft to have all kinds of custom stuff here. While there are a few files that get dropped into you repo (name `azure_error` and `iisnode.yml`), the (optional) CLI is installed via npm and deployment is handled via git. Nice!
+
+As of writing, Azure is running 0.8.2, and this value must be configured correctly in package.json.
+
+#### Misc Notes and Dashboard
+The account creation process was by far the most tedious of any listed here. It included SMS verification, a Windows Live account, and a separate git user account for deploying. But overall, the dashboard is pretty nice considering the huge scope of the Azure platform. They also support streaming log files. As far as I can tell, Heroku is the only other provider on this list to do so.
+
+![Azure dashboard](img/azure-dashboard.png)
+
+## dotCloud
+http://dotcloud.com
+
+Support for multiple languages. Like Nodejitsu they recently dropped their free tier, so a credit card is required to get started.
+
+#### Configuring variables
+Variables via the CLI or a `dotcloud.yml` file.
+
+Port needs to be set to 8080.
+
+#### Deploying
+dotClouds CLI is written in Python and uses rsync to minimize the amount of data you need to upload on each deploy. In order to deploy, you need both a `supervisord.conf` and `dotcloud.yml` files, which is a minor nuisance.
+
+As of writing, dotCloud runs 0.6.20. Ouch.
+
+#### Misc Notes and Dashboard
+I got burned early on by dotcloud when they made some breaking changes with little warning. I guess that's life in a beta world, but I haven't been anxious to run back.
+
+![dotCloud dashboard](img/dotcloud-dashboard.png)
 
 ### Engine Yard
 - pick between nginx as front or straight to Node.js, which gives you option of WebSockets
@@ -153,24 +185,14 @@ The free plan seems pretty generous, giving you up to 8 instances across 2GB of 
 - when my first deploy failed, a chat window popped up with option for me to put in my phone number
 - can't seem to find env vars, but with SSH can drop a config file on the server
 
-### dotCloud
-- got burned early on, but coming back with an open mind
-- CLI in Python
-- MongoDB on board
-- requires CC (recently dumped their free tier)
-- PORT needs to be 8080
-- `dotcloud env set` or via dotcloud.yml
-
-### OpenShift
+#### OpenShift
 - free preview no CC
 - deploy via git
 - MongoDB on board as a "cartridge"
 
-### CleverCloud (aka nodejs-cloud)
-- Seems very early days. Sign-up and instructions not as friendly and clear
+#### CleverCloud (aka nodejs-cloud)
+- Seems very early days. Sign-up and instructions not very clear
 - Port set to 8080
 - 0.10.3 and have Express and Socket.io pre-installed, but...
 - don't even support environment variables. If you deploy with GIT, that's a must
-- drops per 10 minutes(?)
-- email upon failure instead of error message
 
