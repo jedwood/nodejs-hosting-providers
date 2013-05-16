@@ -5,7 +5,7 @@ Node.js Hosting PaaS Providers
 
 Node.js may still be young relative to its counterparts, but when it comes to hosting there are a lot of options. In this post we'll take a look at several "Platform as a Service" providers.
 
-I'm not going to (intentionally) cover "Infrustructure as a Service" options like [AWS](http://aws.amazon.com) and [Joyent](http://joyent.com)*, although ironically I have much more personal experience with both of those than any provider on this list.
+I'm not including "Infrustructure as a Service" options like [AWS](http://aws.amazon.com) and [Joyent](http://joyent.com), although ironically I have much more personal experience with both of those than any provider on this list.
 
 In this round, I'm primarily looking at two aspects: *deploying* and *configuring* environment variables. I'll also include some notes about getting started, some screenshots of dashboards, and other miscelaneous observations.
 
@@ -13,29 +13,29 @@ In this round, I'm primarily looking at two aspects: *deploying* and *configurin
 
 Here's the simple app we're going to be using as a test base.
 
-  var express = require('express'),
-      config   = require('nconf'),
-      app     = express();
+        var express = require('express'),
+            config   = require('nconf'),
+            app     = express();
 
-  config.argv().env().file({ file: '../config.json' });
-  config.defaults({'PORT': 1337, SECRET: 'default secret.'});
+        config.argv().env().file({ file: '../config.json' });
+        config.defaults({'PORT': 1337, SECRET: 'default secret.'});
 
-  app.configure(function(){
-    app.set('port', config.get('PORT'));
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(app.router);
-    app.use(express.logger('dev'));
-    app.use(express.errorHandler());
-  });
+        app.configure(function(){
+          app.set('port', config.get('PORT'));
+          app.use(express.bodyParser());
+          app.use(express.methodOverride());
+          app.use(app.router);
+          app.use(express.logger('dev'));
+          app.use(express.errorHandler());
+        });
 
-  app.get('/', function(req, res, next) {
-    res.send({secret: config.get('SECRET')});
-  });
+        app.get('/', function(req, res, next) {
+          res.send({secret: config.get('SECRET')});
+        });
 
-  app.listen(app.get('port'), function(){
-    console.log("Node.js Hosting Test listening on port " + config.get('PORT') + ', running in ' + app.settings.env + " mode, Node version is: " + process.version);
-  });
+        app.listen(app.get('port'), function(){
+          console.log("Node.js Hosting Test listening on port " + config.get('PORT') + ', running in ' + app.settings.env + " mode, Node version is: " + process.version);
+        });
 
 
 I'm using [nconf](https://github.com/flatiron/nconf) to elegantly handle the varying ways that we'll be specifying the port our app should listen to (sometimes required) and a dummy variable I'm calling `SECRET.` When I load the app, I'll be able to tell if our variables are being correctly pulled from some external source. If not, the response I get back when I load the app will be `default secret`. I should also be able to see what port the app is listening on an the `NODE_ENV` it's using if I can access the logs from the startup of the app.
