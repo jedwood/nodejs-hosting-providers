@@ -1,0 +1,6 @@
+www:
+  type: nodejs
+  config:
+    node_version: v0.6.x
+  environment:
+    PORT: 8080
