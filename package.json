@@ -2,7 +2,7 @@
   "name": "twitter-proxy-example",
   "version": "0.0.1-5",
   "engines": {
-    "node": "v0.8.2",
+    "node": "v0.8.x",
     "npm": "1.1.x"
   },
   "private": true,
