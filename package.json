@@ -1,8 +1,8 @@
 {
   "name": "twitter-proxy-example",
-  "version": "0.0.1",
+  "version": "0.0.1-4",
   "engines": {
-    "node": "0.10.x",
+    "node": "0.8.x",
     "npm": "1.1.x"
   },
   "private": true,
@@ -19,5 +19,6 @@
     "type": "git",
     "url": ""
   },
-  "author": "jedwood"
+  "author": "jedwood",
+  "subdomain": "jedwood"
 }

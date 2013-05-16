@@ -4,7 +4,7 @@ var express = require('express'),
 
 config.argv().env().file({ file: '../config.json' });
 
-config.defaults({'PORT': 5000, secret: 'default secret.'});
+config.defaults({'PORT': 1337, secret: 'default secret.'});
 // //
 // // Set a few variables on `nconf`.
 // //
