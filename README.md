@@ -166,7 +166,7 @@ Support for multiple languages. Like Nodejitsu they recently dropped their free 
 #### Configuring variables
 Variables via the CLI or a `dotcloud.yml` file.
 
-Port needs to be set to 8080.
+The listening port needs to be set to 8080.
 
 #### Deploying
 dotClouds CLI is written in Python and uses rsync to minimize the amount of data you need to upload on each deploy. In order to deploy, you need both a `supervisord.conf` and `dotcloud.yml` files, which is a minor nuisance.
@@ -178,21 +178,26 @@ I got burned early on by dotcloud when they made some breaking changes with litt
 
 ![dotCloud dashboard](img/dotcloud-dashboard.png)
 
-### Engine Yard
-- pick between nginx as front or straight to Node.js, which gives you option of WebSockets
-- you configure more of the setup and environment
-- respectes package.json, only up to 0.8.11
-- when my first deploy failed, a chat window popped up with option for me to put in my phone number
-- can't seem to find env vars, but with SSH can drop a config file on the server
+## Engine Yard
+http://engineyard.com
 
-#### OpenShift
-- free preview no CC
-- deploy via git
-- MongoDB on board as a "cartridge"
+Like Heroku, Engine Yard is known primary for it's Ruby on Rails hosting. Unlike Heroku, you have more control over the setup and environment. It's still a PaaS, but people with some direct server experience will appreciate being a little "closer to the metal."
 
-#### CleverCloud (aka nodejs-cloud)
-- Seems very early days. Sign-up and instructions not very clear
-- Port set to 8080
-- 0.10.3 and have Express and Socket.io pre-installed, but...
-- don't even support environment variables. If you deploy with GIT, that's a must
+#### Configuring variables
+Environment variable cas be set by using the `ey_config` npm module. Engine Yars also support SSH access to your machine, which means you could create a config.json and drop it in the right place.
+
+The port should be `process.env.PORT` and nconf is already handling that for us.
+
+#### Deploying
+Handled via git.
+
+It respects the node version value in `package.json` but only up to 0.8.11.
+
+#### Misc Notes and Dashboard
+When you create an application, you get to choose between nginx as front-end proxy (which the recommend) or going straight to Node.js, the latter of which gives you option of WebSockets.
+
+When my first deploy failed, a chat window popped up with option for me to put in my phone number.
+
+![Engine Yard dashboard](img/engineyard-dashboard.png)
+
 
