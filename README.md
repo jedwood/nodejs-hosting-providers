@@ -228,8 +228,8 @@ And then added `ipaddr` in the `app.listen` section of my `server.js` like this:
 
 It took me a while to dig through the forums and figure that one out. With the ease of getting started on many of these other platforms, that kind of thing is frustrating. The fledgling sysadmin of me 12 years ago would call the modern version of me spoiled. :) But hey, that's what PaaS is about!
 
-<!-- ![OpenShift dashboard](img/openshift-dashboard.png)
-
+![OpenShift dashboard](img/openshift-dashboard.png)
+<!--
 ## CloudFoundry
 http://cloudfoundry.com
 
