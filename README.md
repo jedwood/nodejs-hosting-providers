@@ -5,9 +5,9 @@ Node.js Hosting PaaS Providers
 
 Node.js may still be young relative to its counterparts, but when it comes to hosting there are a lot of options. In this post we'll take a look at several "Platform as a Service" providers.
 
-I'm not including "Infrustructure as a Service" options like [AWS](http://aws.amazon.com) and [Joyent](http://joyent.com), although ironically I have much more personal experience with both of those than any provider on this list.
+I'm not including "Infrustructure as a Service" options like [AWS](http://aws.amazon.com) and [Joyent](http://joyent.com), although the lines between PaaS and SaaS get a little blurry with some of these options.
 
-In this round, I'm primarily looking at two aspects: *deploying* and *configuring* environment variables. I'll also include some notes about getting started, some screenshots of dashboards, and other miscelaneous observations.
+In this round, I'm primarily looking at two aspects: *deploying* and *configuring* environment variables. I'll also include some notes about getting started, some screenshots of dashboards, and other miscelaneous observations. In future posts we'll run some basic performance testing and take a look at the ease of scaling.
 
 ## The Setup
 
@@ -184,7 +184,7 @@ http://engineyard.com
 Like Heroku, Engine Yard is known primary for it's Ruby on Rails hosting. Unlike Heroku, you have more control over the setup and environment. It's still a PaaS, but people with some direct server experience will appreciate being a little "closer to the metal."
 
 #### Configuring variables
-Environment variable cas be set by using the `ey_config` npm module. Engine Yars also support SSH access to your machine, which means you could create a config.json and drop it in the right place.
+Environment variable cas be set by using the `ey_config` npm module. Engine Yard also support SSH access to your machine, which means you could create a config.json and drop it in the right place.
 
 The port should be `process.env.PORT` and nconf is already handling that for us.
 
@@ -200,4 +200,58 @@ When my first deploy failed, a chat window popped up with option for me to put i
 
 ![Engine Yard dashboard](img/engineyard-dashboard.png)
 
+## OpenShift.com
+http://openshift.com
 
+OpenShift is an open source project maintained primarily by Red Hat, and OpenShift.com is a hosted service for the platform (think WordPress.org vs WordPress.com).
+
+#### Configuring variables
+OpenShift.com supports SSH access to your machine, which means you could create a config.json and drop it in the right place. Otherwise, there are no special commands or predefined config files.
+
+The port should be `process.env.OPENSHIFT_INTERNAL_PORT || 8080`.
+
+#### Deploying
+Handled via git, though there is a CLI for creating and managing projects if you're not a fan of web-based GUIs. You'll need to add your public SSH key to your account first, which was a step not included in the node.js sample quickstart.
+
+It ignores the node version value in `package.json` and runs a rusty ol' *v0.6.20*.
+
+#### Misc Notes and Dashboard
+I had some problems getting the sample app running at first, so I started over and let OpenShift populate the git repository for me with their sample files. There are a few extra things in there, many of which are tucked under the `.openshift` directory. These include deploy hooks and config files. The `README` they include does a good job of laying out the structure and explaining the purpose of each file.
+
+But I still got stuck on the fact that I needed to listen on a specific IP address. That mean including this:
+
+`var ipaddr  = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";`
+
+And then added `ipaddr` in the `app.listen` section of my `server.js` like this:
+
+`app.listen(app.get('port'), ipaddr, function(){...`
+
+It took me a while to dig through the forums and figure that one out. With the ease of getting started on many of these other platforms, that kind of thing is frustrating. The fledgling sysadmin of me 12 years ago would call the modern version of me spoiled. :) But hey, that's what PaaS is about!
+
+<!-- ![OpenShift dashboard](img/openshift-dashboard.png)
+
+## CloudFoundry
+http://cloudfoundry.com
+
+CloudFoundry...
+
+#### Configuring variables
+CloudFoundry ... supports SSH access to your machine, which means you could create a config.json and drop it in the right place.
+
+The port should be ... `process.env.OPENSHIFT_INTERNAL_PORT || 8080`.
+
+#### Deploying
+Handled via git, though there is a CLI for creating and managing projects if you're not a fan of web-based GUIs. You'll need to add your public SSH key to your account first, which was a step not included in the node.js sample quickstart.
+
+It ignores the node version value in `package.json` and runs a rusty ol' *v0.6.20*.
+
+#### Misc Notes and Dashboard
+
+
+![CloudFoundry dashboard](img/cloudfoundry-dashboard.png) -->
+
+---
+# Until Next Time
+Remember, things are changing fast in this space. So don't take any of the specifics here as the final word before you check for updates. For example, in the couple of days that it took me to type this up, Modulus sent out an email about upgrading their version of Node.js.
+
+In future posts I'll be walking through how we can monitor and test the performance of these platforms, and then take a shot at scaling them.
