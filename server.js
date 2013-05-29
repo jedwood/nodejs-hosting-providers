@@ -4,7 +4,8 @@ var express = require('express'),
 
 config.argv().env().file({ file: '../config.json' });
 
-config.defaults({'PORT': 1337, SECRET: 'default secret.'});
+//config.defaults({'PORT': 1337, SECRET: 'default secret.'});
+config.defaults({'PORT': process.env.OPENSHIFT_INTERNAL_PORT || 8080, SECRET: 'default secret.'});
 
 
 app.configure(function(){
