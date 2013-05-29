@@ -229,29 +229,19 @@ And then added `ipaddr` in the `app.listen` section of my `server.js` like this:
 It took me a while to dig through the forums and figure that one out. With the ease of getting started on many of these other platforms, that kind of thing is frustrating. The fledgling sysadmin of me 12 years ago would call the modern version of me spoiled. :) But hey, that's what PaaS is about!
 
 ![OpenShift dashboard](img/openshift-dashboard.png)
-<!--
+
 ## CloudFoundry
 http://cloudfoundry.com
 
-CloudFoundry...
+At first look, CloudFoundry has a clear and friendly process for getting started. However, a few screens into the process I was presented with this message:
 
-#### Configuring variables
-CloudFoundry ... supports SSH access to your machine, which means you could create a config.json and drop it in the right place.
+    *We are in a time of transition:*
+    You are reading V2 documentation... Cloudfoundry.com will be upgraded to V2 in June 2013.
 
-The port should be ... `process.env.OPENSHIFT_INTERNAL_PORT || 8080`.
-
-#### Deploying
-Handled via git, though there is a CLI for creating and managing projects if you're not a fan of web-based GUIs. You'll need to add your public SSH key to your account first, which was a step not included in the node.js sample quickstart.
-
-It ignores the node version value in `package.json` and runs a rusty ol' *v0.6.20*.
-
-#### Misc Notes and Dashboard
-
-
-![CloudFoundry dashboard](img/cloudfoundry-dashboard.png) -->
+So I'll circle back to them in the next installment of this series.
 
 ---
 # Until Next Time
-Remember, things are changing fast in this space. So don't take any of the specifics here as the final word before you check for updates. For example, in the couple of days that it took me to type this up, Modulus sent out an email about upgrading their version of Node.js.
+Needless to say things are changing quickly in this space. Don't put too much weight on any specific detail here without first checking for updates. For example, in the couple of days that it took me to type this up, Modulus sent out an email about upgrading their version of Node.js.
 
-In future posts I'll be walking through how we can monitor and test the performance of these platforms, and then take a shot at scaling them.
+In future posts I'll be walking through how we can monitor and test the performance of these platforms, and then take a shot at scaling them. In the meantime, let me know if I've missed your favorite Node.js PaaS.
