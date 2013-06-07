@@ -5,7 +5,7 @@ Node.js Hosting PaaS Providers
 
 Node.js may still be young relative to its counterparts, but when it comes to hosting there are a lot of options. In this post we'll take a look at several "Platform as a Service" providers.
 
-I'm not including "Infrustructure as a Service" options like [AWS](http://aws.amazon.com) and [Joyent](http://joyent.com), although the lines between PaaS and SaaS get a little blurry with some of these options.
+I'm not including "Infrastructure as a Service" options like [AWS](http://aws.amazon.com) and [Joyent](http://joyent.com), although the lines between PaaS and IaaS get a little blurry with some of these options.
 
 In this round, I'm primarily looking at two aspects: *deploying* and *configuring* environment variables. I'll also include some notes about getting started, some screenshots of dashboards, and other miscelaneous observations. In future posts we'll run some basic performance testing and take a look at the ease of scaling.
 
@@ -213,7 +213,7 @@ The port should be `process.env.OPENSHIFT_INTERNAL_PORT || 8080`.
 #### Deploying
 Handled via git, though there is a CLI for creating and managing projects if you're not a fan of web-based GUIs. You'll need to add your public SSH key to your account first, which was a step not included in the node.js sample quickstart.
 
-It ignores the node version value in `package.json` and runs a rusty ol' *v0.6.20*.
+It ignores the node version value in `package.json` and runs a rusty ol' v0.6.20 by default, but with [some extra steps](https://www.openshift.com/blogs/any-version-of-nodejs-you-want-in-the-cloud-openshift-does-it-paas-style) you can change that.
 
 #### Misc Notes and Dashboard
 I had some problems getting the sample app running at first, so I started over and let OpenShift populate the git repository for me with their sample files. There are a few extra things in there, many of which are tucked under the `.openshift` directory. These include deploy hooks and config files. The `README` they include does a good job of laying out the structure and explaining the purpose of each file.
@@ -226,7 +226,7 @@ And then added `ipaddr` in the `app.listen` section of my `server.js` like this:
 
 `app.listen(app.get('port'), ipaddr, function(){...`
 
-It took me a while to dig through the forums and figure that one out. With the ease of getting started on many of these other platforms, that kind of thing is frustrating. The fledgling sysadmin of me 12 years ago would call the modern version of me spoiled. :) But hey, that's what PaaS is about!
+I've had an exchange with the OpenShift folks and they're going to update their getting started guide to make this more clear.
 
 ![OpenShift dashboard](img/openshift-dashboard.png)
 
