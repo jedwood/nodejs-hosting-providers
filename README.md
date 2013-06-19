@@ -9,9 +9,7 @@ I'm not including "Infrastructure as a Service" options like [AWS](http://aws.am
 
 In this round, I'm primarily looking at two aspects: *deploying* and *configuring* environment variables. I'll also include some notes about getting started, some screenshots of dashboards, and other miscelaneous observations. In future posts we'll run some basic performance testing and take a look at the ease of scaling.
 
-## TL;DR
-
-Looking for a summary of my experience? Here you go:
+## The Players
 
 | Provider    | Deployment method | Environment variables | Performance |
 | :--------   | :-----------------| :---------------------| :-----------|
