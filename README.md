@@ -9,37 +9,25 @@ I'm not including "Infrastructure as a Service" options like [AWS](http://aws.am
 
 In this round, I'm primarily looking at two aspects: *deploying* and *configuring* environment variables. I'll also include some notes about getting started, some screenshots of dashboards, and other miscelaneous observations. In future posts we'll run some basic performance testing and take a look at the ease of scaling.
 
+## TL;DR
+
+Looking for a summary of my experience? Here you go:
+
+| Provider    | Deployment method | Environment variables | Performance |
+| :--------   | :-----------------| :---------------------| :-----------|
+| Nodejitsu   | CLI | CLI or web interface | *coming soon*|
+| Heroku      | git        | CLI                  | *coming soon*|
+| Modulus     | CLI or web upload | CLI or web interface | *coming soon*|
+| App Fog     | CLI | CLI or web interface | *coming soon*|
+| Azure       | CLI or git | CLI or web interface | *coming soon*|
+| dotCloud    | CLI | CLI or `.yml` file | *coming soon*|
+| Engine Yard | git | `ey_config` npm module | *coming soon*|
+| OpenShift   | git | SSH and create file | *coming soon*|
+| CloudFoundry| *coming soon* | *coming soon* | *coming soon*|
+
 ## The Setup
 
-Here's the simple app we're going to be using as a test base.
-
-        var express = require('express'),
-            config   = require('nconf'),
-            app     = express();
-
-        config.argv().env().file({ file: '../config.json' });
-        config.defaults({'PORT': 1337, SECRET: 'default secret.'});
-
-        app.configure(function(){
-          app.set('port', config.get('PORT'));
-          app.use(express.bodyParser());
-          app.use(express.methodOverride());
-          app.use(app.router);
-          app.use(express.logger('dev'));
-          app.use(express.errorHandler());
-        });
-
-        app.get('/', function(req, res, next) {
-          res.send({secret: config.get('SECRET')});
-        });
-
-        app.listen(app.get('port'), function(){
-          console.log("Node.js Hosting Test listening on port " + config.get('PORT'));
-          console.log("Running in ' + app.settings.env + " mode, Node version is: " + process.version);
-        });
-
-
-I'm using [nconf](https://github.com/flatiron/nconf) to elegantly handle the varying ways that we'll be specifying the port our app should listen to (sometimes required) and a dummy variable I'm calling `SECRET.` It will first look for arguments passed in to the `node` command, then environment variables, then it will try to load a `config.json` file one level up from the root, and finally fall back on some defaults we've defined right in the code. When I load the app, I'll be able to tell if our variables are being correctly pulled from one of those external sources. If it's not, the response I get back when I load the app will be `default secret`. I should also be able to see what port the app is listening on an the `NODE_ENV` it's using if I can access the logs from the startup of the app.
+I'm starting with a very simple Express app, and using [nconf](https://github.com/flatiron/nconf) to elegantly handle the varying ways that we'll be specifying the port our app should listen to (sometimes required) and a dummy variable I'm calling `SECRET.` It will first look for arguments passed in to the `node` command, then environment variables, then it will try to load a `config.json` file one level up from the root, and finally fall back on some defaults we've defined right in the code. When I load the app, I'll be able to tell if our variables are being correctly pulled from one of those external sources. If it's not, the response I get back when I load the app will be `default secret`. I should also be able to see what port the app is listening on an the `NODE_ENV` it's using if I can access the logs from the startup of the app.
 
 Finally, I'm setting `"engines": { "node": "v0.10.x" ...` in the `package.json` file to see how each provider reacts.
 
@@ -53,18 +41,20 @@ One of the original players and still purely a Node.js solution, Nodejitsu becam
 #### Configuring variables
 According to the docs it doesn't matter what you set the listening port to, as long as it's either 80 or greater than 1024.
 
-Setting our `SECRET` to override the default was straightforward, using the CLI you can list and set variables, much like several other providers on this list.
+Setting our `SECRET` to override the default was straightforward. You can use the CLI or web interface to list and set variables, much like several other providers on this list.
 
 #### Deploying
 Pushing your code to the Nodejitsu cloud is done via a custom command-line interface application (CLI), installed with npm. When you sign up you get dumped right into a github repository with instructions, but overall the setup process was pretty painless. You're prompted to select a subdomain, which is then automatically added to the `package.json` file. In the couple of tests I ran, deploying was really quick. It auto-increments the `version` property in the package.json file with each deploy, which doesn't bother me but might annoy some folks.
 
-I only ran into two small hitches. The first was with versioning. In the message that gets spit out upon deploying, I was shown:
+I ran into three small hitches. The first was with versioning. In the message that gets spit out upon deploying, I was shown:
 
 `info: jitsu v0.12.10-2, node v0.10.4`
 
 and yet, I was told that `0.10.x` was not a supported value. Only by bumping down to `0.8.x` was I able to find success.
 
 Second, I tried to change the `name` property in `package.json` and it then wouldn't let me deploy.
+
+Third, my ENV variables got wiped out every time I re-deployed. Perhaps there's a way to avoid that.
 
 #### Misc Notes and Dashboard
 I like that Nodejitsu is so Node.js centric. Any custom configuration is at least handled via the standard `package.json` file. You can even define custom `predeploy` and `postdeploy` hooks. My totally subjective response is that it felt very snappy to deploy and view logs.
@@ -144,7 +134,7 @@ http://windowsazure.com
 Yep. Believe it.
 
 #### Configuring variables
-Variables can be set either via the web interface or the CLI. I experienced on weird behavior on the `SECRET` when I first set it up via the CLI; it was lowercased to `secret`. I had to use the web interface to correct it.
+Variables can be set either via the web interface or the CLI. I experienced one weird bit behavior on the `SECRET` when I first set it up via the CLI; it was lowercased to `secret`. I had to use the web interface to correct it.
 
 The app ran fine without making any changes to our configuration for ports, although the logs showed a pretty wacky value: `\\.\pipe\bea0dffc-de5b-47f4-8575-4d17c2175fd5`
 
