@@ -1,6 +1,6 @@
 require('nodefly').profile(
     'bde5e07e-1a81-4f6e-a9fd-c6ac2c3f1357',
-    ['NODE PaaS TEST', 'heroku'],
+    ['NODE PaaS TEST', 'appfog'],
     {blockThreshold: 10}
 );
 
