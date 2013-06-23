@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "express": "3.1.0",
-    "nconf": "~0.6.7"
+    "nconf": "~0.6.7",
+    "nodefly": "stable"
   },
   "description": "",
   "main": "server.js",
