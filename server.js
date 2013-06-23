@@ -1,6 +1,6 @@
 require('nodefly').profile(
     'bde5e07e-1a81-4f6e-a9fd-c6ac2c3f1357',
-    ['NODE PaaS TEST', 'azure'],
+    ['NODE PaaS TEST', 'openshift'],
     {blockThreshold: 10}
 );
 
