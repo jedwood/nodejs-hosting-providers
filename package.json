@@ -1,8 +1,8 @@
 {
-  "name": "twitter-proxy-example",
-  "version": "0.0.1-5",
+  "name": "nodejs-hosting-test",
+  "version": "0.0.1-6",
   "engines": {
-    "node": "v0.8.x",
+    "node": "v0.10.x",
     "npm": "1.1.x"
   },
   "private": true,
