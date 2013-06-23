@@ -31,7 +31,7 @@ app.get('/block/:n', function(req, res){
   res.send("done: " + blockres);
 });
 
-app.listen(app.get('port'), function(){
+app.listen(app.get('port'), ipaddr, function(){
   console.log("Node.js Hosting Test listening on port " + config.get('PORT') + ', running in ' + app.settings.env + " mode, Node version is: " + process.version);
 });
 
