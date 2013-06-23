@@ -9,9 +9,9 @@ var express = require('express'),
     app     = express();
 
 config.argv().env().file({ file: '../config.json' });
-//config.defaults({'PORT': 1337, SECRET: 'default secret.'});
-config.defaults({'PORT': process.env.OPENSHIFT_INTERNAL_PORT || 8080, SECRET: 'default secret.'});
-var ipaddr  = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+config.defaults({'PORT': 1337, SECRET: 'default secret.'});
+//config.defaults({'PORT': process.env.OPENSHIFT_INTERNAL_PORT || 8080, SECRET: 'default secret.'});
+//var ipaddr  = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 
 app.configure(function(){
   app.set('port', config.get('PORT'));
@@ -31,7 +31,7 @@ app.get('/block/:n', function(req, res){
   res.send("done: " + blockres);
 });
 
-app.listen(app.get('port'), ipaddr, function(){
+app.listen(app.get('port'), function(){
   console.log("Node.js Hosting Test listening on port " + config.get('PORT') + ', running in ' + app.settings.env + " mode, Node version is: " + process.version);
 });
 
